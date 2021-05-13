@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "66061236924",
+    "project_id": "intelligent-assistant-core",
+    "storage_bucket": "intelligent-assistant-core.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66061236924:android:620055d1c7c52b44caeeb9",
+        "android_client_info": {
+          "package_name": "com.Intelli.IntelliAssist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66061236924-eri8f5v16ovb27ccpkgdtmnukkutt2t0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGBhEmWxP3sUmc_EixwOWoRbxtBpT90aM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66061236924-eri8f5v16ovb27ccpkgdtmnukkutt2t0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
