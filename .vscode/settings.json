@@ -1,0 +1,6 @@
+{
+  "importCost.javascriptExtensions": [
+  
+    "\\.jsx?$"
+  ]
+}

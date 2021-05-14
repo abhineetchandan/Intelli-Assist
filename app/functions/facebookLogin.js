@@ -1,4 +1,3 @@
-import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
 
 export default async function onFacebookButtonPress() {
@@ -19,6 +18,4 @@ export default async function onFacebookButtonPress() {
   // Create a Firebase credential with the AccessToken
   const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
   console.log('facebook credentials', facebookCredential);
-  // Sign-in the user with the credential
-  return auth().signInWithCredential(facebookCredential);
   }

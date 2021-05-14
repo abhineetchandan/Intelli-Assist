@@ -5,15 +5,13 @@ import { TextInput, TouchableOpacity } from "react-native";
 import { Button } from "react-native";
 import * as Yup from "yup";
 import { Text } from "react-native";
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
-import auth from '@react-native-firebase/auth'
-import store from '../store/store'
-import { updateUser } from '../store/actions'
-import onFacebookButtonPress from '../functions/facebookLogin'
-import onGoogleButtonPress from '../functions/googleLogin'
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin'
-import { LoginButton } from 'react-native-fbsdk'
-import storage from '@react-native-firebase/storage'
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import store from "../store/store";
+import { updateUser } from "../store/actions";
+import onFacebookButtonPress from "../functions/facebookLogin";
+import onGoogleButtonPress from "../functions/googleLogin";
+import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { LoginButton } from "react-native-fbsdk";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -27,27 +25,13 @@ const validationSchema = Yup.object().shape({
 });
 
 export default class registerPage extends React.Component {
-  state={
-    err: ''
-  }
+  state = {
+    err: "",
+  };
 
   async handleSubmit(values) {
-    try{
-    let response = await(auth().createUserWithEmailAndPassword(values.email, values.password))
-    console.log(response)
-    store.dispatch(updateUser({response}))
-    const reference = storage().ref(`${response.uid}.txt`) 
-    
-  const re = await reference.putFile(this.state.err);
-console.log('re', re)
-this.props.navigation.navigate('Detail Page', {name: ''})
-    
-  } catch (err) {
-    const stringErr = `${err}`
-    const formatErr = stringErr.replace(/ *\[[^]*\] */g, " ").trim()
-    this.setState({err: `${formatErr}`})
-	  console.log(this.state.err)
-  }
+    try {
+    } catch (err) {}
   }
 
   render() {
@@ -55,7 +39,7 @@ this.props.navigation.navigate('Detail Page', {name: ''})
       <View style={[styles.container, { paddingTop: 20 }]}>
         <Formik
           validationSchema={validationSchema}
-          initialValues={{ email: "", password: ""}}
+          initialValues={{ email: "", password: "" }}
           onSubmit={(values) => this.handleSubmit(values)}
         >
           {({
@@ -67,7 +51,11 @@ this.props.navigation.navigate('Detail Page', {name: ''})
           }) => (
             <>
               <View styles={{ flexDirection: "row" }}>
-                <MaterialCommunityIcons style={{paddingTop: 20}} name="email" size={25} />
+                <MaterialCommunityIcons
+                  style={{ paddingTop: 20 }}
+                  name="email"
+                  size={25}
+                />
                 <TextInput
                   style={{ paddingLeft: 10 }}
                   autoCapitalize="none"
@@ -84,7 +72,11 @@ this.props.navigation.navigate('Detail Page', {name: ''})
               )}
 
               <View style={{ flexDirection: "row" }}>
-                <MaterialCommunityIcons style={{marginTop: 5}} name="lock" size={25} />
+                <MaterialCommunityIcons
+                  style={{ marginTop: 5 }}
+                  name="lock"
+                  size={25}
+                />
                 <TextInput
                   autoCapitalize="none"
                   onBlur={() => setFieldTouched("password")}
@@ -100,28 +92,55 @@ this.props.navigation.navigate('Detail Page', {name: ''})
                 <Text style={{ color: "red" }}>{errors.password}</Text>
               )}
 
-              <Button title="REGISTER"  onPress={() => handleSubmit()} color="red" />
+              <Button
+                title="REGISTER"
+                onPress={() => handleSubmit()}
+                color="red"
+              />
             </>
           )}
         </Formik>
-	<Text style={{color: 'red'}}>{this.state.err}</Text>
-<Text style={{alignSelf: 'center', paddingLeft: 30, paddingTop: 40, paddingRight: 20, color: 'blue'}}>Register using:</Text>
-        <View style={{flexDirection: 'row'}}>
-	    
-    <GoogleSigninButton
-    style={{ width: 192, height: 35 }}
-    size={GoogleSigninButton.Size.Wide}
-    color={GoogleSigninButton.Color.Dark}
-    onPress={() => onGoogleButtonPress().then(() => this.props.navigation.navigate('Tab', {screen: 'Home'}))}
-    />	  
-        <TouchableOpacity style={{paddingTop: 3}} onPress={() => onFacebookButtonPress().then(this.props.navigation.navigate('Tab', {screen: 'Home'}))} >
-	  <LoginButton /> 
-	</TouchableOpacity>
-        <TouchableOpacity>
-	  <MaterialCommunityIcons name='microsoft' size={25} style={{ margin: 5, paddingRight: 10}}  />
-	</TouchableOpacity>
-	    </View>
-
+        <Text style={{ color: "red" }}>{this.state.err}</Text>
+        <Text
+          style={{
+            alignSelf: "center",
+            paddingLeft: 30,
+            paddingTop: 40,
+            paddingRight: 20,
+            color: "blue",
+          }}
+        >
+          Register using:
+        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <GoogleSigninButton
+            style={{ width: 192, height: 35 }}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={() =>
+              onGoogleButtonPress().then(() =>
+                this.props.navigation.navigate("Tab", { screen: "Home" })
+              )
+            }
+          />
+          <TouchableOpacity
+            style={{ paddingTop: 3 }}
+            onPress={() =>
+              onFacebookButtonPress().then(
+                this.props.navigation.navigate("Tab", { screen: "Home" })
+              )
+            }
+          >
+            <LoginButton />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <MaterialCommunityIcons
+              name="microsoft"
+              size={25}
+              style={{ margin: 5, paddingRight: 10 }}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }

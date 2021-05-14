@@ -3,24 +3,18 @@ import { View, StyleSheet, ImageBackground, Image, Alert } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
-import store from '../store/store'
-import { removeUser } from '../store/actions'
-import auth from '@react-native-firebase/auth'
+import store from "../store/store";
+import { removeUser } from "../store/actions";
 
 export default class OpeningScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasUser : false
-    }
+      hasUser: false,
+    };
   }
-  componentDidMount() {
-	  console.log(store.getState().user.uid)
-    if (store.getState().user.uid){	
-    this.setState({hasUser: true})}
-  }
+  componentDidMount() {}
   render() {
-    if (this.state.hasUser === false) {
     return (
       <View style={[styles.container, { justifyContent: "flex-end" }]}>
         <ImageBackground
@@ -54,7 +48,7 @@ export default class OpeningScreen extends React.Component {
                             onPress: () => {
                               RNAndroidNotificationListener.requestPermission();
                               this.props.navigation.navigate("Login Page");
-}
+                            },
                           },
                         ],
                         {
@@ -62,7 +56,7 @@ export default class OpeningScreen extends React.Component {
                         }
                       );
                     } else if (status === "authorized") {
-                      this.props.navigation.navigate('Login Page');
+                      this.props.navigation.navigate("Login Page");
                     }
                   }
                 );
@@ -92,9 +86,10 @@ export default class OpeningScreen extends React.Component {
                         [
                           {
                             text: "OK",
-                            onPress: () => {                              RNAndroidNotificationListener.requestPermission();
+                            onPress: () => {
+                              RNAndroidNotificationListener.requestPermission();
                               this.props.navigation.navigate("Register Page");
-	}
+                            },
                           },
                         ],
                         {
@@ -119,11 +114,6 @@ export default class OpeningScreen extends React.Component {
         </ImageBackground>
       </View>
     );
-  } else {
-    this.props.navigation.navigate('Tab', { screen: 'Home' })
-	  console.log('returning null')
-  return null
-  }
   }
 }
 
