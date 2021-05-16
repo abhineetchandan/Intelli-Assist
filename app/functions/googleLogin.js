@@ -18,7 +18,7 @@ export default async function onGoogleButtonPress() {
   store.dispatch(updateUser(userInfo.user))  
   console.log(idToken, accessToken)
   // Create a Google credential with the token
-  const googleCredential = auth.GoogleAuthProvider.credential(idToken, accessToken);
-   console.log('googleLoginCredentials ', googleCredential)
+//  const googleCredential = auth.GoogleAuthProvider.credential(idToken, //accessToken);
+   //console.log('googleLoginCredentials ', googleCredential)
   // Sign-in the user with the credential
 }

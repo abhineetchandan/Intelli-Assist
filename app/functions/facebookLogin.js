@@ -16,6 +16,6 @@ export default async function onFacebookButtonPress() {
   }
 
   // Create a Firebase credential with the AccessToken
-  const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-  console.log('facebook credentials', facebookCredential);
+//  const facebookCredential = auth.FacebookAuthProvider.credential//(data.accessToken);
+  //console.log('facebook credentials', facebookCredential);
   }

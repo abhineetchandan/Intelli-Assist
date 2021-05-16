@@ -19,7 +19,6 @@ import Swipeable from "react-native-gesture-handler/Swipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
-import BackgroundService from 'react-native-background-actions';
 import voice from './voice'
 
 
@@ -72,11 +71,6 @@ class Home extends React.Component {
     const opened = store.getState().isFirstOpened
     console.log('firstopenedreceived', opened)
     console.log(store.getState().user)
-    if (firstopened) {
-      store.dispatch(firstopened({payload: false}))
-      console.log('status of firstopened is ', opened)
-      await BackgroundService.start(this.listenHello, this.options);
-    }
     this.setState({ selectedId: null });
     // To check if the user has permission
     RNAndroidNotificationListener.getPermissionStatus().then((status) => {

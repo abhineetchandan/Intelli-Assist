@@ -8,7 +8,6 @@ import { Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import store from "../store/store";
 import { updateUser } from "../store/actions";
-import firestore from "@react-native-firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import { AccessToken, GraphRequest } from "react-native-fbsdk";
 

@@ -3,7 +3,6 @@ import {Button, View,Text,StyleSheet} from 'react-native'
 import styles from './styles'
 import store from '../store/store'
 import { CHANGE_SHOW, removeUser } from '../store/actions';
-import auth from '@react-native-firebase/auth'
 
 export default class settings extends React.Component {
   render(){
@@ -16,7 +15,6 @@ export default class settings extends React.Component {
           this.props.navigation.navigate("FirstOpened")
         }}/>
         <Button title={'Log Out!'} onPress={() => {
-          auth().signOut()
 		store.dispatch(removeUser({remove: true}))
           this.props.navigation.navigate('Opening Screen')
 	}}/>
