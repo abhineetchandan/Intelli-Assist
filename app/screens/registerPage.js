@@ -5,13 +5,15 @@ import { TextInput, TouchableOpacity } from "react-native";
 import { Button } from "react-native";
 import * as Yup from "yup";
 import { Text } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import store from "../store/store";
 import { updateUser } from "../store/actions";
 import onFacebookButtonPress from "../functions/facebookLogin";
 import onGoogleButtonPress from "../functions/googleLogin";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
 import { LoginButton } from "react-native-fbsdk";
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -22,16 +24,34 @@ const validationSchema = Yup.object().shape({
     .required()
     .min(6)
     .label("Password"),
+  name: Yup.string()
+    .required()
+    .label("Name")
+    .min(3)
+    .max(40),
 });
 
 export default class registerPage extends React.Component {
   state = {
-    err: "",
+    error: "",
   };
 
   async handleSubmit(values) {
     try {
-    } catch (err) {}
+      const user = await axios.post("http://192.168.43.20:3000/users/signup", {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+      });
+      const token = user.headers["x-auth-token"];
+      await SecureStore.setItemAsync("token", token);
+      store.dispatch(updateUser(user.data));
+      this.props.navigation.navigate("Tab", {
+        screen: "Home",
+      });
+    } catch (err) {
+      this.setState({ error: err.response.data });
+    }
   }
 
   render() {
@@ -39,7 +59,7 @@ export default class registerPage extends React.Component {
       <View style={[styles.container, { paddingTop: 20 }]}>
         <Formik
           validationSchema={validationSchema}
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ email: "", password: "", name: "" }}
           onSubmit={(values) => this.handleSubmit(values)}
         >
           {({
@@ -50,6 +70,21 @@ export default class registerPage extends React.Component {
             errors,
           }) => (
             <>
+              <View styles={{ flexDirection: "row" }}>
+                <Ionicons style={{ paddingTop: 20 }} name="person" size={25} />
+                <TextInput
+                  style={{ paddingLeft: 10 }}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  onBlur={() => setFieldTouched("name")}
+                  onChangeText={handleChange("name")}
+                  placeholder={"Name"}
+                />
+              </View>
+
+              {touched.name && (
+                <Text style={{ color: "red" }}>{errors.name}</Text>
+              )}
               <View styles={{ flexDirection: "row" }}>
                 <MaterialCommunityIcons
                   style={{ paddingTop: 20 }}
@@ -91,7 +126,7 @@ export default class registerPage extends React.Component {
               {touched.password && (
                 <Text style={{ color: "red" }}>{errors.password}</Text>
               )}
-
+              <Text style={{ color: "red" }}>{this.state.error}</Text>
               <Button
                 title="REGISTER"
                 onPress={() => handleSubmit()}

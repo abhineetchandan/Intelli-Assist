@@ -10,12 +10,14 @@ import {
 } from "react-native-fbsdk";
 import * as Yup from "yup";
 import { Text } from "react-native";
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import store from "../store/store";
 import { updateUser } from "../store/actions";
 import onFacebookButtonPress from "../functions/facebookLogin";
 import onGoogleButtonPress from "../functions/googleLogin";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -30,13 +32,25 @@ const validationSchema = Yup.object().shape({
 
 export default class loginPage extends React.Component {
   state = {
-    err: "",
+    error: "",
     name: "",
   };
 
   async handleSubmit(values) {
     try {
-    } catch (err) {}
+      const user = await axios.post("http://192.168.43.20:3000/users/login", {
+        email: values.email,
+        password: values.password,
+      });
+      const token = user.headers["x-auth-token"];
+      await SecureStore.setItemAsync("token", token);
+      store.dispatch(updateUser(user.data));
+      this.props.navigation.navigate("Tab", {
+        screen: "Home",
+      });
+    } catch (err) {
+      this.setState({ error: err.response.data });
+    }
   }
 
   responseInfoCallback = (error, result) => {
@@ -108,7 +122,7 @@ export default class loginPage extends React.Component {
               {touched.password && (
                 <Text style={{ color: "red" }}>{errors.password}</Text>
               )}
-
+              <Text style={{ color: "red" }}>{this.state.error}</Text>
               <Button
                 title="LOGIN"
                 onPress={() => handleSubmit()}
@@ -143,11 +157,11 @@ export default class loginPage extends React.Component {
           <TouchableOpacity
             style={{ paddingTop: 3 }}
             onPress={() =>
-              onFacebookButtonPress().then(() => {
+              onFacebookButtonPress().then(({ name }) => {
                 new GraphRequestManager().addRequest(this.infoRequest).start();
                 setTimeout(() => {
                   this.props.navigation.navigate("Detail Page", {
-                    name: this.state.name,
+                    name: name,
                   });
                 }, 2000);
               })

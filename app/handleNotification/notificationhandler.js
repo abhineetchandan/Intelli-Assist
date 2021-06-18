@@ -1,38 +1,36 @@
-import PushNotification from 'react-native-push-notification';
-import store from '../store/store'
-import { deleteTask } from '../store/actions';
-import { Alert } from 'react-native'
+import PushNotification from "react-native-push-notification";
+import store from "../store/store";
+import { deleteTask } from "../store/actions";
+import { Alert } from "react-native";
 
 class NotificationHandler {
   onNotification(notification) {
-
-    if (typeof this._onNotification === 'function') {
+    if (typeof this._onNotification === "function") {
       this._onNotification(notification);
     }
   }
 
   onRegister(token) {
-    if (typeof this._onRegister === 'function') {
+    if (typeof this._onRegister === "function") {
       this._onRegister(token);
     }
   }
 
   onAction(notification) {
-    if(notification.action === 'Ok Got It!') {
-	   Alert.alert(notification.title, notification.message) 
-  } else if (notifcation.action === 'REMOVE THIS TASK NOW!'){
+    if (notification.action === "Ok Got It!") {
+      Alert.alert(notification.title, notification.message);
+    } else if (notifcation.action === "REMOVE THIS TASK NOW!") {
       PushNotification.invokeApp(notification);
-	  const todeleteid = notification.data.id
-     store.dispatch(deleteTask({id : todeleteid}))  
+      const todeleteid = notification.data.id;
+      store.dispatch(deleteTask({ id: todeleteid }));
     }
   }
-  
 
   // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
   onRegistrationError(err) {
     console.log(err);
   }
-  
+
   attachRegister(handler) {
     this._onRegister = handler;
   }
@@ -66,7 +64,7 @@ PushNotification.configure({
    * - Specified if permissions (ios) and token (android and ios) will requested or not,
    * - if not, you must call PushNotificationsHandler.requestPermissions() later
    */
-  requestPermissions: Platform.OS === 'ios',
+  requestPermissions: Platform.OS === "ios",
 });
 
 export default handler;

@@ -18,9 +18,9 @@ import PushNotification from "react-native-push-notification";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import * as SecureStore from "expo-secure-store";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
-import voice from './voice'
-
+import voice from "./voice";
 
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
@@ -35,21 +35,21 @@ class Home extends React.Component {
       rerender: this.props.rerender,
     };
     this.options = {
-    taskName: 'Assistant',
-    taskTitle: 'Listening for your orders',
-    taskDesc: 'Waiting for your order. Press here to learn more',
-    taskIcon: {
-        name: 'ic_launcher',
-        type: 'mipmap',
-    },
-    color: '#ff00ff',
-    linkingURI: 'undefined',
-    parameters: {
+      taskName: "Assistant",
+      taskTitle: "Listening for your orders",
+      taskDesc: "Waiting for your order. Press here to learn more",
+      taskIcon: {
+        name: "ic_launcher",
+        type: "mipmap",
+      },
+      color: "#ff00ff",
+      linkingURI: "undefined",
+      parameters: {
         delay: 1000,
-    },
-};
-  this.voice = new voice()
-  this.voice._startRecognizing.bind(this)
+      },
+    };
+    this.voice = new voice();
+    this.voice._startRecognizing.bind(this);
   }
 
   NavigateToIndividualPage = (item) => {
@@ -68,9 +68,8 @@ class Home extends React.Component {
   };
 
   async componentDidMount() {
-    const opened = store.getState().isFirstOpened
-    console.log('firstopenedreceived', opened)
-    console.log(store.getState().user)
+    console.log("My token is ", await SecureStore.getItemAsync("token"));
+    console.log(store.getState().user);
     this.setState({ selectedId: null });
     // To check if the user has permission
     RNAndroidNotificationListener.getPermissionStatus().then((status) => {
@@ -84,12 +83,12 @@ class Home extends React.Component {
   listenHello = async (taskDataArguments) => {
     // Example of an infinite loop task
     const { delay } = taskDataArguments;
-    await new Promise( async (resolve) => {
-      setInterval(() => {//this.voice._startRecognizing()
-      }
-	      ,3000)
+    await new Promise(async (resolve) => {
+      setInterval(() => {
+        //this.voice._startRecognizing()
+      }, 3000);
     });
-};
+  };
 
   componentDidUpdate() {}
   renderItem = (item) => {
@@ -190,7 +189,7 @@ class Home extends React.Component {
 }
 
 const mapStatetoProps = (state) => ({
-  username: state.user.displayName,
+  username: state.user.name,
   tasks: state.tasks,
   count: state.count,
   language: state.user.language,

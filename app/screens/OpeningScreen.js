@@ -1,39 +1,57 @@
-import React from "react";
-import { View, StyleSheet, ImageBackground, Image, Alert } from "react-native";
+import React, { useCallback } from "react";
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  Text,
+  Image,
+  Alert,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
-import store from "../store/store";
-import { removeUser } from "../store/actions";
+import * as SecureStore from "expo-secure-store";
 
 export default class OpeningScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       hasUser: false,
+      isReady: false,
     };
   }
-  componentDidMount() {}
+  async componentDidMount() {
+    const result = await SecureStore.getItemAsync("token");
+    console.log(result);
+    if (result) {
+      this.setState({ isReady: true });
+
+      this.props.navigation.navigate("Tab", {
+        screen: "Home",
+      });
+    } else {
+      this.setState({ isReady: true });
+    }
+  }
+
   render() {
     return (
-      <View style={[styles.container, { justifyContent: "flex-end" }]}>
+      <View style={styles.container}>
         <ImageBackground
-          style={{ width: "100%", height: "100%" }}
-          blurRadius={10}
           resizeMode="stretch"
+          style={styles.image}
+          imageStyle={styles.image_imageStyle}
           source={require("../assets/background.png")}
         >
-          <View style={{ alignItems: "center", opacity: 1 }}>
-            <Image
-              style={[styles.logo, { justifyContent: "center" }]}
-              source={require("../assets/logo.png")}
-            />
-          </View>
-          <Animatable.View
-            animation={"lightSpeedIn"}
-            style={[styles.loginButton, { opacity: 1 }]}
-          >
+          <Image
+            source={require("../assets/icon.png")}
+            resizeMode="contain"
+            style={styles.image2}
+          ></Image>
+          <Text style={styles.intelliAssist}>Intelli Assist</Text>
+          <Animatable.View animation={"lightSpeedIn"}>
             <TouchableOpacity
+              style={styles.button}
               onPress={() => {
                 RNAndroidNotificationListener.getPermissionStatus().then(
                   (status) => {
@@ -62,19 +80,14 @@ export default class OpeningScreen extends React.Component {
                 );
               }}
             >
-              <Animatable.Text
-                animation={"lightSpeedIn"}
-                style={{ fontSize: 30 }}
-              >
+              <Animatable.Text animation={"lightSpeedIn"} style={styles.login}>
                 Login
               </Animatable.Text>
             </TouchableOpacity>
           </Animatable.View>
-          <Animatable.View
-            animation={"lightSpeedIn"}
-            style={[styles.registerButton, { opacity: 1 }]}
-          >
+          <Animatable.View animation={"lightSpeedIn"}>
             <TouchableOpacity
+              style={styles.button1}
               onPress={() => {
                 RNAndroidNotificationListener.getPermissionStatus().then(
                   (status) => {
@@ -103,10 +116,7 @@ export default class OpeningScreen extends React.Component {
                 );
               }}
             >
-              <Animatable.Text
-                animation={"lightSpeedIn"}
-                style={{ fontSize: 30 }}
-              >
+              <Animatable.Text animation={"lightSpeedIn"} style={styles.signup}>
                 Register
               </Animatable.Text>
             </TouchableOpacity>
@@ -120,34 +130,91 @@ export default class OpeningScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    opacity: 0.91,
+  },
+  image: {
+    width: 375,
+    height: 812,
+  },
+  image_imageStyle: {},
+  image2: {
+    width: 125,
+    height: 129,
+    borderRadius: 200,
+    marginTop: 139,
+    marginLeft: 118,
+  },
+  intelliAssist: {
+    fontFamily: "monospace",
+    color: "rgba(179,5,249,1)",
+    height: 71,
+    width: 375,
+    fontSize: 40,
+    textDecorationLine: "underline",
+    textAlign: "center",
+    marginTop: 41,
+  },
+  button: {
+    width: 303,
+    alignSelf: "center",
+    height: 60,
+    backgroundColor: "rgba(1,255,73,1)",
+    borderWidth: 1,
+    borderColor: "rgba(40,247,202,1)",
+    borderStyle: "solid",
+    borderRadius: 100,
+  },
+  login: {
     alignContent: "center",
     justifyContent: "center",
+    alignSelf: "center",
+    fontFamily: "sans-serif",
+    color: "rgba(0,0,0,1)",
+    fontSize: 35,
   },
-  loginButton: {
-    backgroundColor: "yellowgreen",
-    position: "absolute",
-    width: "100%",
-    height: 50,
-    bottom: 150,
-    alignItems: "center",
-    borderRadius: 15,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    position: "absolute",
-    top: 30,
+  button1: {
+    width: 303,
+    height: 60,
+    backgroundColor: "rgba(15,255,199,1)",
+    borderWidth: 1,
     alignContent: "center",
-    alignItems: "center",
+    borderColor: "rgba(40,247,202,1)",
+    borderRadius: 100,
+    marginTop: 34,
+    alignSelf: "center",
   },
-  registerButton: {
-    backgroundColor: "tomato",
-    width: "100%",
-    borderRadius: 15,
-    position: "absolute",
-    height: 50,
-    bottom: 85,
-    alignItems: "center",
+  signup: {
+    fontFamily: "sans-serif",
+    color: "rgba(0,0,0,1)",
+    fontSize: 35,
+    alignContent: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
+  // loginButton: {
+  //   backgroundColor: "yellowgreen",
+  //   position: "absolute",
+  //   width: "100%",
+  //   height: 50,
+  //   bottom: 150,
+  //   alignItems: "center",
+  //   borderRadius: 15,
+  // },
+  // logo: {
+  //   width: 150,
+  //   height: 150,
+  //   position: "absolute",
+  //   top: 30,
+  //   alignContent: "center",
+  //   alignItems: "center",
+  // },
+  // registerButton: {
+  //   backgroundColor: "tomato",
+  //   width: "100%",
+  //   borderRadius: 15,
+  //   position: "absolute",
+  //   height: 50,
+  //   bottom: 85,
+  //   alignItems: "center",
+  // },
 });
