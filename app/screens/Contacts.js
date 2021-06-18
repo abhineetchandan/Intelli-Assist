@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { View } from "react-native";
 import { Text } from "react-native";
+import SearchBar from "../components/MaterialSearchBar";
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class Contacts extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{ paddingTop: 25 }}>
+        <SearchBar />
         <Text>{this.state.friends}</Text>
       </View>
     );

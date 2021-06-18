@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     textAlign: "center",
     marginTop: 41,
+    marginBottom: 45,
   },
   button: {
     width: 303,
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     alignSelf: "center",
-    fontFamily: "sans-serif",
+    fontFamily: "comic-sans-ms-regular",
     color: "rgba(0,0,0,1)",
     fontSize: 35,
   },
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   signup: {
-    fontFamily: "sans-serif",
+    fontFamily: "comic-sans-ms-regular",
     color: "rgba(0,0,0,1)",
     fontSize: 35,
     alignContent: "center",

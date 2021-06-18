@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     alignItems: "center",
     borderRadius: 2,
-
+    margin: 4,
     flex: 1,
   },
   leftIconButton: {

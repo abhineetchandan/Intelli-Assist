@@ -1,12 +1,14 @@
 import React from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import { io } from "socket.io-client";
+import * as SecureStore from "expo-secure-store";
 
 export default class chatPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       no: 5,
+      token: null,
       name: this.props.route.params.name,
       time: this.props.route.params.time,
       message: [this.props.route.params.message],
@@ -26,28 +28,35 @@ export default class chatPage extends React.Component {
         },
       ],
     };
-    this.socket = io("http://192.168.43.20:3000");
+    this.socket = io("http://192.168.43.20:3000", {
+      auth: {
+        token: this.state.token,
+      },
+    });
   }
 
   onSend(messages = []) {
     this.setState((previousState) => ({
-      messages: GiftedChat.append(previousState.messages, messages),
+      messages: [...previousState.messages, messages[0]],
     }));
-    console.log(messages);
     this.socket.emit("user.message", {
       ...messages,
       userId: this.state.id,
     });
   }
 
-  componentDidUpdate() {
-    console.log(this.state.messages);
-  }
+  componentDidUpdate() {}
 
-  componentDidMount() {
-    this.socket.connect();
-    this.socket.on("message", (message) => {
-      console.log(message);
+  async componentDidMount() {
+    const token = await SecureStore.getItemAsync("token");
+    console.log(token);
+    this.socket = io("http://192.168.43.20:3000/", {
+      auth: {
+        token: token,
+      },
+    });
+    this.socket.on("connect_error", (err) => {
+      console.log(err);
     });
     this.socket.on("user.reply", (message) => {
       this.state.messages.push({
@@ -60,8 +69,8 @@ export default class chatPage extends React.Component {
           avatar: "https://placeimg.com/140/140/any",
         },
       });
-      // const newArr = this.state.messages.sort(function(a, b) {
-      //   return a.createdAt - b.createdAt;
+      // this.state.messages.sort(function(a, b) {
+      //   return a.createdAt.getTime() - b.createdAt.getTime();
       // });
     });
   }
@@ -75,8 +84,10 @@ export default class chatPage extends React.Component {
         }}
         user={{
           _id: 1,
+          avatar: "https://placeimg.com/140/140/any",
+          name: "Abhineet",
         }}
-        inverted
+        inverted={false}
       />
     );
   }
