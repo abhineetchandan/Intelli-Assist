@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Animatable from "react-native-animatable";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
 import * as SecureStore from "expo-secure-store";
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
 
 export default class OpeningScreen extends React.Component {
   constructor(props) {
@@ -18,33 +20,45 @@ export default class OpeningScreen extends React.Component {
     this.state = {
       hasUser: false,
       isReady: false,
+      fontLoaded: false,
     };
   }
-  async componentDidMount() {
-    const result = await SecureStore.getItemAsync("token");
-    console.log(result);
-    if (result) {
-      this.setState({ isReady: true });
 
-      this.props.navigation.navigate("Tab", {
-        screen: "Home",
-      });
-    } else {
-      this.setState({ isReady: true });
-    }
+  async loadFonts() {
+    this.setState({
+      fontLoaded: useFonts({
+        "comic-sans-ms-regular": require("../../assets/fonts/comic-sans-ms-regular.ttf"),
+        "trebuchet-ms-regular": require("../../assets/fonts/trebuchet-ms-regular.ttf"),
+      }),
+    });
+  }
+
+  async componentDidMount() {
+    console.log("mounted");
   }
 
   render() {
+    if (!this.state.fontLoaded) {
+      return (
+        <AppLoading
+          startAsync={this.loadFonts}
+          onFinish={() => {
+            this.setState({ fontLoaded: true });
+          }}
+          onError={(err) => console.log("error", err)}
+        />
+      );
+    }
     return (
       <View style={styles.container}>
         <ImageBackground
           resizeMode="stretch"
           style={styles.image}
           imageStyle={styles.image_imageStyle}
-          source={require("../assets/background.png")}
+          source={require("../../assets/background.png")}
         >
           <Image
-            source={require("../assets/icon.png")}
+            source={require("../../assets/icon.png")}
             resizeMode="contain"
             style={styles.image2}
           ></Image>
@@ -145,7 +159,7 @@ const styles = StyleSheet.create({
     marginLeft: 118,
   },
   intelliAssist: {
-    fontFamily: "monospace",
+    fontFamily: "comic-sans-ms-regular",
     color: "rgba(179,5,249,1)",
     height: 71,
     width: 375,

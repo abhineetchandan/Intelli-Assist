@@ -14,15 +14,7 @@ class Chats extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [
-        {
-          name: "Abhineet",
-          message: "Hello",
-          time: "12:00 pm",
-          id: "1",
-          read: true,
-        },
-      ],
+      data: this.props.data,
       loaded: false,
     };
   }
@@ -49,6 +41,7 @@ class Chats extends Component {
 
   _renderPersonRow(person) {
     const src = "../assets/logo.png";
+    console.log(person);
     return (
       <TouchableOpacity
         onPress={() => {
@@ -100,10 +93,15 @@ class Chats extends Component {
       </TouchableOpacity>
     );
   }
+
+  componentDidMount() {
+    console.log(this.state.data);
+    console.log(this.props.data);
+  }
 }
 
 const mapStateToProps = (state) => ({
-  data: state.user.friends,
+  friends: state.user.friends,
 });
 
 export default connect(mapStateToProps)(Chats);

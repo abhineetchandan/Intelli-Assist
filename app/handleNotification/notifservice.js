@@ -241,11 +241,7 @@ export default class NotifService {
       userInfo: { sceen: "HOME" }, // (optional) default: {} (using null throws a JSON value '<null>' error)
       playSound: false, // (optional) default: true
       number: 10, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
-      repeatType: function() {
-        if (isDaily === true) {
-          return "day";
-        } else return null;
-      },
+      repeatType: isDaily, 
     });
   }
 

@@ -92,12 +92,22 @@ class newTask extends React.Component {
   };
 
   AddingTask = () => {
-    appNotif.scheduleNotification(
-      this.state.count,
-      this.state.date,
-      this.state.name,
-      this.state.isDaily
-    );
+    if (this.state.isDaily) {
+      appNotif.scheduleNotification(
+        this.state.count,
+        this.state.date,
+        this.state.name,
+        "daily"
+      );
+    } else {
+      appNotif.scheduleNotification(
+        this.state.count,
+        this.state.date,
+        this.state.name,
+        null
+      );
+    }
+
     store.dispatch(
       addTask({
         id: this.state.count,

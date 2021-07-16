@@ -15,18 +15,7 @@ export default class chatPage extends React.Component {
       image: this.props.route.params.image,
       id: this.props.route.params.id,
       read: this.props.route.params.read,
-      messages: [
-        {
-          _id: 1,
-          text: "Hello",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: "React Native",
-            avatar: "https://placeimg.com/140/140/any",
-          },
-        },
-      ],
+      messages: [],
     };
     this.socket = io("http://192.168.43.20:3000", {
       auth: {

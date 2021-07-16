@@ -1,35 +1,35 @@
-import React from "react";
+//Packages Import
+import React, { Component } from "react";
 import { PersistGate } from "redux-persist/integration/react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from "expo-secure-store";
+import { Provider } from "react-redux";
+
+//Native App Module Imports
+import checkDirs from "./app/functions/checkDirs";
 import Home from "./app/screens/Home";
 import settings from "./app/screens/settings";
 import help from "./app/screens/help";
-import * as SecureStore from "expo-secure-store";
 import newTask from "./app/screens/newTask";
 import TaskProp from "./app/screens/taskprop";
-import firstOpened from "./app/screens/firstopened";
-import { Provider } from "react-redux";
 import store, { persistor } from "./app/store/store";
-import notes from "./app/screens/notesPage";
-import addMyNote from "./app/screens/addNote";
 import MainHome from "./app/screens/MainHome";
-import OpeningScreen from "./app/screens/OpeningScreen";
-import loginPage from "./app/screens/loginPage";
-import registerPage from "./app/screens/registerPage";
+import OpeningScreen from "./app/screens/authentication/OpeningScreen";
+import loginPage from "./app/screens/authentication/loginPage";
+import registerPage from "./app/screens/authentication/registerPage";
 import userDetail from "./app/screens/getUserDetails";
 import AppLoading from "expo-app-loading";
 import Chats from "./app/screens/chat";
 import chatPage from "./app/screens/chatPage";
 import Contacts from "./app/screens/Contacts";
-import RNFetchBlob from "rn-fetch-blob";
 
 const Tab = createBottomTabNavigator();
 const MyStack = createStackNavigator();
 
-export default class App extends React.Component {
+export default class App extends Component {
   constructor() {
     super();
     this.state = {
@@ -41,30 +41,9 @@ export default class App extends React.Component {
   }
 
   checkUser = async () => {
-    RNFetchBlob.fs
-      .isDir(`${RNFetchBlob.fs.dirs.DocumentDir}/chats`)
-      .then((isDir) => {
-        if (isDir) this.setState({ directoryExists: true });
-        else {
-          RNFetchBlob.fs
-            .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/chats`)
-            .catch((err) => console.log(err))
-            .then();
-          RNFetchBlob.fs
-            .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/pictures`)
-            .catch((err) => console.log(err))
-            .then();
-          RNFetchBlob.fs
-            .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/profile`)
-            .catch((err) => console.log(err))
-            .then();
-          RNFetchBlob.fs
-            .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/videos`)
-            .catch((err) => console.log(err))
-            .then(() => this.setState({ directoryExists: true }));
-        }
-      });
-
+    const isDirCreated = await checkDirs();
+    if (!isDirCreated)
+      throw new Error("An Unexpected Error occured while initialising files.");
     const result = await SecureStore.getItemAsync("token");
     if (result) {
       this.setState({
@@ -135,11 +114,9 @@ export default class App extends React.Component {
                   name="Opening Screen"
                   component={OpeningScreen}
                 />
-                <MyStack.Screen name="FirstOpened" component={firstOpened} />
                 <MyStack.Screen name="Tab" component={this.Tab} />
                 <MyStack.Screen name="Add New Task" component={newTask} />
                 <MyStack.Screen name="New Task" component={TaskProp} />
-                <MyStack.Screen name="Add Note" component={addMyNote} />
                 <MyStack.Screen name="Main Home" component={MainHome} />
                 <MyStack.Screen name="Login Page" component={loginPage} />
                 <MyStack.Screen name="Register Page" component={registerPage} />
@@ -161,10 +138,8 @@ export default class App extends React.Component {
                   name="Opening Screen"
                   component={OpeningScreen}
                 />
-                <MyStack.Screen name="FirstOpened" component={firstOpened} />
                 <MyStack.Screen name="Add New Task" component={newTask} />
                 <MyStack.Screen name="New Task" component={TaskProp} />
-                <MyStack.Screen name="Add Note" component={addMyNote} />
                 <MyStack.Screen name="Main Home" component={MainHome} />
                 <MyStack.Screen name="Login Page" component={loginPage} />
                 <MyStack.Screen name="Register Page" component={registerPage} />
