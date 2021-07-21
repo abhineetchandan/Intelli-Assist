@@ -1,31 +1,45 @@
 import RNFetchBlob from "rn-fetch-blob";
 
 export default function checkDirs() {
+  let isDirCreated;
   RNFetchBlob.fs
     .isDir(`${RNFetchBlob.fs.dirs.DocumentDir}/chats`)
     .then((isDir) => {
-      if (isDir) return true;
-      else {
+      if (isDir) {
+        isDirCreated = true;
+      } else {
         RNFetchBlob.fs
           .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/chats`)
-          .catch((err) => returnValue())
+          .catch((err) => {
+            isDirCreated = false;
+          })
           .then();
         RNFetchBlob.fs
           .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/pictures`)
-          .catch((err) => returnValue())
+          .catch((err) => {
+            isDirCreated = false;
+            returnValue();
+          })
           .then();
         RNFetchBlob.fs
           .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/profile`)
-          .catch((err) => returnValue())
+          .catch((err) => {
+            isDirCreated = false;
+            returnValue();
+          })
           .then();
         RNFetchBlob.fs
           .mkdir(`${RNFetchBlob.fs.dirs.DocumentDir}/videos`)
-          .catch((err) => returnValue())
+          .catch((err) => {
+            isDirCreated = false;
+            returnValue();
+          })
           .then(() => {
-            return true;
+            isDirCreated = true;
           });
       }
     });
+  return isDirCreated;
 }
 
 function returnValue() {
