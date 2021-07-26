@@ -2,12 +2,11 @@ import { combineReducers } from "redux";
 
 import {
   REMOVE_USER,
-  FIRST_OPENED,
+  HAS_USER,
   UPDATE_USER,
   UPDATE_TASK,
   DELETE_TASK,
   ADD_TASK,
-  LATEST_TASK,
   CHANGE_SHOW,
   ADD_NOTE,
   UPDATE_NOTE,
@@ -133,10 +132,10 @@ const notesIdReducer = (state = 0, action) => {
   }
 };
 
-const firstReducer = (state = true, action) => {
+const hasUser = (state = false, action) => {
   switch (action.type) {
-    case FIRST_OPENED:
-      return false;
+    case HAS_USER:
+      return action.payload;
     default:
       return state;
   }
@@ -150,7 +149,7 @@ const reducer = combineReducers({
   shouldShow: showReducer,
   notes: notesReducer,
   notesId: notesIdReducer,
-  isFirstOpened: firstReducer,
+  hasUser: hasUser,
 });
 
 export default reducer;

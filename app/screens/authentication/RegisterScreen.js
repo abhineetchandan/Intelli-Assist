@@ -1,21 +1,18 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Image, View } from "react-native";
 import { Formik } from "formik";
-import { TouchableOpacity } from "react-native";
-import {
-  LoginButton,
-  GraphRequest,
-  GraphRequestManager,
-} from "react-native-fbsdk";
+import { TextInput, TouchableOpacity } from "react-native";
 import * as Yup from "yup";
-import { Text, TextInput } from "react-native";
+import { Text } from "react-native";
 import store from "../../store/store";
-import { updateUser } from "../../store/actions";
+import { updateUser, hasUser } from "../../store/actions";
 import onFacebookButtonPress from "../../functions/facebookLogin";
 import onGoogleButtonPress from "../../functions/googleLogin";
 import { GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { LoginButton } from "react-native-fbsdk";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import MaterialCommunityIconsIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Font from "expo-font";
 import { LinearGradient } from "expo-linear-gradient";
@@ -25,6 +22,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import * as Animatable from "react-native-animatable";
+import AuthContext from "../../AuthContext";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -35,40 +33,39 @@ const validationSchema = Yup.object().shape({
     .required()
     .min(6)
     .label("Password"),
+  name: Yup.string()
+    .required()
+    .label("Name")
+    .min(3)
+    .max(40),
 });
 
-export default class LoginScreen extends React.Component {
+export default class RegisterScreen extends React.Component {
   state = {
     error: "",
-    name: "",
   };
+
+  static contextType = AuthContext;
 
   async handleSubmit(values) {
     try {
-      const user = await axios.post("http://192.168.43.20:3000/users/login", {
-        email: values.email,
-        password: values.password,
-      });
-      const token = user.headers["x-auth-token"];
+      const siteUser = await axios.post(
+        "http://192.168.43.20:3000/users/signup",
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        }
+      );
+      const token = siteUser.headers["x-auth-token"];
       await SecureStore.setItemAsync("token", token);
-      store.dispatch(updateUser(user.data));
-      this.props.navigation.navigate("Tab", {
-        screen: "Home",
-      });
+      store.dispatch(updateUser(siteUser.data));
+      let user = this.context;
+      user.setUser(true);
     } catch (err) {
       this.setState({ error: err.response.data });
     }
   }
-
-  responseInfoCallback = (error, result) => {
-    if (error) {
-      console.log("Error fetching data: " + error.toString());
-    } else {
-      const resultJson = result;
-      this.setState({ name: resultJson.name });
-      console.log("loginPage", result.name);
-    }
-  };
 
   async componentDidMount() {
     await Font.loadAsync({
@@ -80,9 +77,9 @@ export default class LoginScreen extends React.Component {
     const token = data.headers["x-auth-token"];
     await SecureStore.setItemAsync("token", token);
     store.dispatch(updateUser(data.data));
+    let user = this.context;
+    user.setUser(true);
   }
-
-  infoRequest = new GraphRequest("/me", null, this.responseInfoCallback);
 
   render() {
     return (
@@ -91,12 +88,12 @@ export default class LoginScreen extends React.Component {
           style={styles.gradientStyle}
           colors={[appColors.fadedPurple, appColors.fadedDarkGreen]}
         >
-          <Animatable.Text animation={"bounce"} style={styles.loginText}>
-            Login
+          <Animatable.Text animation={"bounce"} style={styles.signup}>
+            Register
           </Animatable.Text>
           <Formik
             validationSchema={validationSchema}
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ email: "", password: "", name: "" }}
             onSubmit={(values) => this.handleSubmit(values)}
           >
             {({
@@ -107,21 +104,53 @@ export default class LoginScreen extends React.Component {
               errors,
             }) => (
               <>
-                <View style={styles.emailIconContainer}>
-                  <View style={styles.emailIconInput}>
+                <View style={styles.nameViewContainer}>
+                  <View style={styles.nameContainer}>
+                    <FontAwesomeIcon
+                      name="male"
+                      style={styles.manStyle}
+                    ></FontAwesomeIcon>
+                    <TextInput
+                      placeholder="Enter your name"
+                      maxLength={30}
+                      placeholderTextColor="rgba(92,88,88,1)"
+                      style={styles.nameInput}
+                      onBlur={() => setFieldTouched("name")}
+                      onChangeText={handleChange("name")}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                    ></TextInput>
+                  </View>
+                </View>
+
+                {touched.name && (
+                  <Text
+                    style={{
+                      color: appColors.red,
+                      paddingLeft: wp("5"),
+                      marginBottom: hp("0.5"),
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    {errors.name}
+                  </Text>
+                )}
+
+                <View style={styles.emailViewContainer}>
+                  <View style={styles.emailContainer}>
                     <MaterialCommunityIconsIcon
                       name="email-outline"
                       style={styles.emailIcon}
                     ></MaterialCommunityIconsIcon>
                     <TextInput
                       placeholder="Enter your email"
-                      autoCapitalize="none"
-                      onChangeText={handleChange("email")}
-                      keyboardType="email-address"
-                      onBlur={() => setFieldTouched("email")}
                       maxLength={60}
-                      returnKeyLabel=""
-                      style={styles.emailInputText}
+                      placeholderTextColor="rgba(84,79,79,1)"
+                      style={styles.textInput}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      onBlur={() => setFieldTouched("email")}
+                      onChangeText={handleChange("email")}
                     ></TextInput>
                   </View>
                 </View>
@@ -131,33 +160,36 @@ export default class LoginScreen extends React.Component {
                     style={{
                       color: appColors.red,
                       paddingLeft: wp("5"),
-                      marginBottom: hp("1"),
+                      marginBottom: hp("0.5"),
                       textDecorationLine: "underline",
                     }}
                   >
                     {errors.email}
                   </Text>
                 )}
+
                 <View style={styles.passwordViewContainer}>
-                  <View style={styles.keyIconTextContainer}>
+                  <View style={styles.passwordContainer}>
                     <MaterialCommunityIconsIcon
                       name="key-variant"
                       style={styles.keyIcon}
                     ></MaterialCommunityIconsIcon>
                     <TextInput
-                      autoCapitalize="none"
-                      onBlur={() => setFieldTouched("password")}
-                      autoCorrect={false}
-                      onChangeText={handleChange("password")}
                       placeholder="Enter your password"
-                      secureTextEntry={true}
+                      placeholderTextColor="rgba(102,90,90,1)"
                       maxLength={60}
+                      secureTextEntry={true}
                       style={styles.passwordInput}
+                      onChangeText={handleChange("password")}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      onBlur={() => setFieldTouched("password")}
                     ></TextInput>
                   </View>
                 </View>
                 {touched.password && (
                   <Text
+                    visible={touched.password}
                     style={{
                       color: appColors.red,
                       paddingLeft: wp("5"),
@@ -168,17 +200,12 @@ export default class LoginScreen extends React.Component {
                     {errors.password}
                   </Text>
                 )}
-                <Text style={{ color: "red", paddingLeft: wp("5") }}>
-                  {this.state.error}
-                </Text>
 
-                <Text style={styles.forgotPassword}>Forgot Password?</Text>
-
-                <View style={styles.continueButtonContainer}>
+                <View style={styles.continueContainer}>
                   <TouchableOpacity onPress={() => handleSubmit()}>
                     <Animatable.Text
-                      animation={"rubberBand"}
-                      style={styles.continueButtonText}
+                      animation={"tada"}
+                      style={styles.continueButton}
                     >
                       Continue
                     </Animatable.Text>
@@ -187,8 +214,11 @@ export default class LoginScreen extends React.Component {
               </>
             )}
           </Formik>
-          <Text style={{ color: "red" }}>{this.state.err}</Text>
-          <Text style={styles.bottomSignin}>Login using</Text>
+          <Text style={{ color: "red", paddingLeft: wp("5") }}>
+            {this.state.error}
+          </Text>
+
+          <Text style={styles.bottomSignin}>Register using</Text>
           <View
             style={{
               flexDirection: "row",
@@ -198,7 +228,7 @@ export default class LoginScreen extends React.Component {
             }}
           >
             <GoogleSigninButton
-              style={{ height: hp("6"), width: wp("30") }}
+              style={{ height: hp("5.5"), width: wp("30") }}
               size={GoogleSigninButton.Size.Standard}
               color={GoogleSigninButton.Color.Dark}
               onPress={() =>
@@ -215,6 +245,8 @@ export default class LoginScreen extends React.Component {
                     .addRequest(this.infoRequest)
                     .start();
                   setTimeout(() => {
+                    store.dispatch(hasUser(true));
+
                     this.props.navigation.navigate("Detail Page", {
                       name: name,
                     });
@@ -225,17 +257,17 @@ export default class LoginScreen extends React.Component {
               <LoginButton
                 style={{
                   width: wp("30"),
-                  height: hp("5.2"),
+                  height: hp("4.7"),
                 }}
               />
             </TouchableOpacity>
           </View>
           <View style={{ alignItems: "flex-end", justifyContent: "flex-end" }}>
             <Text
-              onPress={() => this.props.navigation.navigate("Register Page")}
+              onPress={() => this.props.navigation.navigate("Login Page")}
               style={styles.noAccount}
             >
-              Don't have an account?
+              Already have an account?
             </Text>
           </View>
         </LinearGradient>
@@ -249,6 +281,14 @@ const styles = StyleSheet.create({
     flex: 1,
     opacity: 1,
   },
+  signup: {
+    fontFamily: "comic-sans-ms-regular",
+    color: appColors.white,
+    fontSize: hp("10"),
+    marginTop: hp(4),
+    marginBottom: hp("6"),
+    alignSelf: "center",
+  },
   gradientStyle: {
     position: "absolute",
     left: 0,
@@ -256,21 +296,43 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-  loginText: {
-    fontFamily: "comic-sans-ms-regular",
-    color: appColors.white,
-    fontSize: hp("10"),
-    marginTop: hp(4),
-    marginBottom: hp(10),
-    alignSelf: "center",
-  },
   bottomSignin: {
     alignSelf: "center",
     fontSize: wp("4.5"),
     marginTop: hp("3"),
     color: appColors.white,
   },
-  emailIconContainer: {
+  nameViewContainer: {
+    borderWidth: 1,
+    alignSelf: "stretch",
+    marginRight: wp("5"),
+    borderRadius: 50,
+    marginLeft: wp("5"),
+    borderColor: appColors.black,
+    backgroundColor: appColors.dullWhite,
+    flexDirection: "row",
+    alignContent: "center",
+    alignItems: "center",
+    marginBottom: hp("1"),
+  },
+  manStyle: {
+    color: appColors.darkPink,
+    fontSize: hp("3.5"),
+    alignSelf: "center",
+  },
+  nameInput: {
+    fontFamily: "roboto-regular",
+    color: appColors.fadedBlack,
+    fontSize: hp("3"),
+    marginLeft: wp("3"),
+    alignSelf: "center",
+  },
+  nameContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    marginLeft: wp("2"),
+  },
+  emailViewContainer: {
     borderWidth: 1,
     alignSelf: "stretch",
     marginRight: wp("5"),
@@ -288,15 +350,14 @@ const styles = StyleSheet.create({
     fontSize: hp("3.5"),
     alignSelf: "center",
   },
-  emailInputText: {
+  textInput: {
     fontFamily: "roboto-regular",
     color: appColors.fadedBlack,
     fontSize: hp("3"),
     marginLeft: wp("3"),
-    width: wp("80"),
     alignSelf: "center",
   },
-  emailIconInput: {
+  emailContainer: {
     flexDirection: "row",
     alignContent: "center",
     marginLeft: wp("2"),
@@ -316,28 +377,19 @@ const styles = StyleSheet.create({
   },
   keyIcon: {
     color: appColors.darkPink,
-    alignSelf: "center",
     fontSize: hp("3.5"),
+    alignSelf: "center",
   },
   passwordInput: {
     fontSize: hp("3"),
     marginLeft: wp(3),
   },
-  keyIconTextContainer: {
+  passwordContainer: {
     flexDirection: "row",
     alignContent: "center",
     marginLeft: wp("2"),
   },
-  forgotPassword: {
-    fontFamily: "roboto-regular",
-    color: appColors.cyan,
-    width: wp("33.5"),
-    textDecorationLine: "underline",
-    height: hp("2.8"),
-    fontSize: wp("4"),
-    marginLeft: wp("7"),
-  },
-  continueButtonContainer: {
+  continueContainer: {
     width: wp("30"),
     height: hp("7"),
     backgroundColor: appColors.pink,
@@ -345,19 +397,19 @@ const styles = StyleSheet.create({
     marginTop: hp("2"),
     alignSelf: "center",
     justifyContent: "center",
-    alignItems: "center",
   },
-  continueButtonText: {
+  continueButton: {
     fontFamily: "roboto-700",
     color: appColors.white,
     fontSize: 20,
+    alignSelf: "center",
   },
   noAccount: {
     color: appColors.white,
     alignContent: "flex-end",
     fontSize: hp("2.3"),
     color: appColors.darkYellow,
-    marginTop: hp("10"),
+    marginTop: hp("7.5"),
     alignSelf: "center",
   },
 });

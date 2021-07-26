@@ -12,9 +12,9 @@ import { TextInput } from "react-native-gesture-handler";
 import styles from "./styles";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { connect } from "react-redux";
-import store from "../../../store/store";
-import { addTask, deleteTask } from "../../../store/actions";
-import appNotif from "../../../handleNotification/notification";
+import store from "../store/store";
+import { addTask, deleteTask } from "../store/actions";
+import appNotif from "../handleNotification/notification";
 
 Date.prototype.getCurrentTime = function() {
   return (

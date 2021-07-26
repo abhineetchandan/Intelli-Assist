@@ -7,7 +7,7 @@ export const CHANGE_SHOW = "CHANGE_SHOW";
 export const ADD_NOTE = "ADD_NOTE";
 export const UPDATE_NOTE = "UPDATE_NOTE";
 export const DELETE_NOTE = "DELETE_NOTE";
-export const FIRST_OPENED = "FIRST_OPENED";
+export const HAS_USER = "HAS_USER";
 export const REMOVE_USER = "REMOVE_USER";
 
 // action creators
@@ -16,8 +16,8 @@ export const updateUser = (update) => ({
   payload: update,
 });
 
-export const firstopened = (update) => ({
-  type: FIRST_OPENED,
+export const hasUser = (update) => ({
+  type: HAS_USER,
   payload: update,
 });
 

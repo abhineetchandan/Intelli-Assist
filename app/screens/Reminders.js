@@ -10,9 +10,9 @@ import {
 import { StatusBar } from "expo-status-bar";
 import styles from "./styles";
 import { connect } from "react-redux";
-import store from "../../../store/store";
+import store from "../store/store";
 import { FlatList } from "react-native-gesture-handler";
-import { deleteTask, firstopened } from "../../../store/actions";
+import { deleteTask, firstopened } from "../store/actions";
 import PushNotification from "react-native-push-notification";
 //import languageCode from "../utils/languageCode";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -26,7 +26,8 @@ LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
   "Cannot update a component from inside the function body of a different component",
 ]);
-class Home extends React.Component {
+
+class Reminders extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -153,14 +154,10 @@ class Home extends React.Component {
   render() {
     return (
       <View style={styles.mainView}>
-        <Text
-          style={styles.boldTexting}
-        >{`${this.state.username}'s Personal Assistant`}</Text>
+        <Text style={styles.boldTexting}>My Reminders</Text>
         <Text style={[styles.smalltexting, { paddingLeft: 3 }]}>
-          {" "}
-          My Work's To Do{" "}
+          Total Reminder: {this.props.tasks.length}
         </Text>
-        <Text>Total Work: {this.props.tasks.length}</Text>
         <FlatList
           data={this.props.tasks}
           renderItem={this.renderItem}
@@ -177,7 +174,7 @@ class Home extends React.Component {
           }}
         />
         <Button
-          title={"Go to Voice Command"}
+          title={"Add A Reminder"}
           onPress={() => {
             this.setState({ selectedId: null }),
               this.props.navigation.navigate("Main Home");
@@ -195,7 +192,7 @@ const mapStatetoProps = (state) => ({
   language: state.user.language,
 });
 
-export default connect(mapStatetoProps)(Home);
+export default connect(mapStatetoProps)(Reminders);
 
 const homeStyles = StyleSheet.create({
   container: {

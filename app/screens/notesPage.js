@@ -1,11 +1,11 @@
 import React from "react";
 import { Button, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import styles from "./styles";
-import store from "../../../store/store";
+import store from "../store/store";
 import { StatusBar } from "expo-status-bar";
 import { connect } from "react-redux";
 import { FlatList } from "react-native-gesture-handler";
-import { deleteNote } from "../../../store/actions";
+import { deleteNote } from "../store/actions";
 
 class notes extends React.Component {
   constructor(props) {

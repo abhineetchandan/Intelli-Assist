@@ -6,8 +6,8 @@ import { Button } from "react-native";
 import * as Yup from "yup";
 import { Text } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import store from "../../../store/store";
-import { updateUser } from "../../../store/actions";
+import store from "../store/store";
+import { updateUser } from "../store/actions";
 import * as ImagePicker from "expo-image-picker";
 import { AccessToken, GraphRequest } from "react-native-fbsdk";
 

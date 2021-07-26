@@ -40,7 +40,7 @@ class Chats extends Component {
   }
 
   _renderPersonRow(person) {
-    const src = "../../../assets/logo.png";
+    const src = "../assets/logo.png";
     console.log(person);
     return (
       <TouchableOpacity

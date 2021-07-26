@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: hp("7"),
   },
   button: {
-    width: wp("50"),
+    width: wp("55"),
     alignSelf: "center",
     height: hp("8"),
     backgroundColor: appColors.eco,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     fontSize: wp("10"),
   },
   button1: {
-    width: wp("50"),
+    width: wp("55"),
     alignSelf: "center",
     height: hp("8"),
     backgroundColor: appColors.peach,

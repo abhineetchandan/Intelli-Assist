@@ -3,18 +3,20 @@ import { View, Button, Text, Switch } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "./styles";
-import { updateTask, addNote } from "../../../store/actions";
+import { updateTask, updateNote } from "../store/actions";
 import { connect } from "react-redux";
-import store from "../../../store/store";
-import appNotif from "../../../handleNotification/notification";
+import store from "../store/store";
+import appNotif from "../handleNotification/notification";
 
-class addMyNote extends Component {
+class addNote extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: this.props.id,
-      name: "",
-      body: "",
+      id: this.props.route.params.id,
+      name: this.props.route.params.name,
+      changedName: this.props.route.params.name,
+      body: this.props.route.params.body,
+      language: this.props.language,
     };
   }
 
@@ -28,11 +30,11 @@ class addMyNote extends Component {
     }
   };
 
-  AddingNote = () => {
+  UpdatingNote = () => {
     store.dispatch(
-      addNote({
+      updateNote({
         id: this.state.id,
-        name: this.state.name,
+        name: this.state.changedName,
         body: this.state.body,
       })
     ),
@@ -42,21 +44,21 @@ class addMyNote extends Component {
   render() {
     return (
       <View style={styles.mainView}>
-        <Text style={styles.boldTexting}>Add A Note</Text>
+        <Text style={styles.boldTexting}>{`${this.state.name}`}</Text>
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.myText}>Name: </Text>
           <TextInput
             style={styles.inputting}
             maxLength={50}
-            placeholder="Enter the name of your note"
-            value={this.state.name}
-            onChangeText={(text) => this.setState({ name: text })}
+            placeholder={"Enter the name of your note"}
+            value={this.state.changedName}
+            onChangeText={(text) => this.setState({ changedName: text })}
           />
         </View>
         <Text> </Text>
         <Text> </Text>
         <View style={{ flexDirection: "row" }}>
-          <Text>Detail Information </Text>
+          <Text>Body: </Text>
           <TextInput
             value={this.state.body}
             multiline={true}
@@ -78,7 +80,7 @@ class addMyNote extends Component {
           title={"SAVE CHANGES"}
           disabled={this.checkButton()}
           onPress={() => {
-            this.AddingNote();
+            this.UpdatingNote();
           }}
         />
       </View>
@@ -87,7 +89,7 @@ class addMyNote extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  id: state.notesId,
+  language: state.user.language,
 });
 
-export default connect(mapStateToProps)(addMyNote);
+export default connect(mapStateToProps)(addNote);

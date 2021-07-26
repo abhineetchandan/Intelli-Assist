@@ -8,15 +8,15 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import MaterialSearchBar1 from "../../../components/MaterialSearchBar1";
+import MaterialSearchBar1 from "../components/MaterialSearchBar1";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import MaterialCardWithImageAndTitle from "../../../components/MaterialCardWithImageAndTitle";
+import MaterialCardWithImageAndTitle from "../components/MaterialCardWithImageAndTitle";
 import * as Font from "expo-font";
 import * as SecureStore from "expo-secure-store";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as axios from "axios";
-import store from "../../../store/store";
-import { updateUser } from "../../../store/actions";
+import store from "../store/store";
+import { updateUser } from "../store/actions";
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -34,7 +34,7 @@ class Contacts extends React.Component {
 
   async componentDidMount() {
     await Font.loadAsync({
-      "aclonica-regular": require("../../../assets/fonts/aclonica-regular.ttf"),
+      "aclonica-regular": require("../assets/fonts/aclonica-regular.ttf"),
     });
   }
 

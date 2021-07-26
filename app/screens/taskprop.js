@@ -3,10 +3,10 @@ import { View, Button, Text, Switch } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import styles from "./styles";
-import { updateTask } from "../../../store/actions";
+import { updateTask } from "../store/actions";
 import { connect } from "react-redux";
-import store from "../../../store/store";
-import appNotif from "../../../handleNotification/notification";
+import store from "../store/store";
+import appNotif from "../handleNotification/notification";
 
 Date.prototype.getCurrentTime = function() {
   return (

@@ -3,8 +3,8 @@ import { View, Text, Button, Switch } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { connect } from "react-redux";
 import styles from "./styles";
-import store from "../../../store/store";
-import { CHANGE_SHOW, updateUser } from "../../../store/actions";
+import store from "../store/store";
+import { CHANGE_SHOW, updateUser } from "../store/actions";
 import ModalSelector from "react-native-modal-selector";
 import * as SecureStore from "expo-secure-store";
 
